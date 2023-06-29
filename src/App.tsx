@@ -1,12 +1,16 @@
 import React from "react";
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
-import { Layout, Menu, MenuProps, theme, Breadcrumb } from "antd";
+import { Outlet } from "react-router-dom";
+import { Layout, theme, Breadcrumb } from "antd";
 import { GithubOutlined, FileOutlined, HomeOutlined } from "@ant-design/icons";
+import LeftMenu from "./components/leftMenu";
 import styles from "./app.module.scss";
 
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
-  const items: MenuProps["items"] = [
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
+  const menuList = [
     {
       name: "Home",
       path: "/home",
@@ -22,38 +26,15 @@ function App() {
       path: "/user",
       icon: GithubOutlined,
       children: [
-        { name: "UserInfo", path: "/user/info", icon: GithubOutlined },
+        {
+          name: "UserInfo",
+          path: "/user/info",
+          icon: GithubOutlined,
+        },
       ],
     },
-  ].map((item, index) => {
-    let newItem = item.children
-      ? {
-          key: item.path,
-          icon: React.createElement(item.icon),
-          label: `${item.name}`,
-          children: item.children.map((item) => {
-            return {
-              key: item.path,
-              icon: React.createElement(item.icon),
-              label: `${item.name}`,
-            };
-          }),
-        }
-      : {
-          key: item.path,
-          icon: React.createElement(item.icon),
-          label: `${item.name}`,
-        };
-    return newItem;
-  });
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
-  const navigateTo = useNavigate();
-  const mnueClick = (e: { key: string }) => {
-    console.log(e);
-    navigateTo(e.key);
-  };
+  ];
+  // TODO 收缩菜单展示框
   return (
     <div className={styles.App}>
       <Layout style={{ height: "100vh" }}>
@@ -69,13 +50,7 @@ function App() {
           // collapsible={true} 是否可折叠
         >
           <div style={{ height: "50px" }} />
-          <Menu
-            theme="dark"
-            mode="inline"
-            defaultSelectedKeys={["4"]}
-            items={items}
-            onClick={mnueClick}
-          />
+          <LeftMenu menuList={menuList}></LeftMenu>
         </Sider>
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Header style={{ padding: 0, background: colorBgContainer }}>
